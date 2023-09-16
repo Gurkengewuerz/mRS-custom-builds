@@ -1,14 +1,22 @@
-{
-  "name": "DIY DualE22 G431CB",
-  "deviceConf": [
-    "DEVICE_HAS_SX126x",
-    "FREQUENCY_BAND_868_MHZ",
-    "FREQUENCY_BAND_915_MHZ_FCC"
-  ],
-  "make": {
-    "extra_D_list": [
-      "STDSTM32_USE_USB"
+[
+  {
+    "name": "DIY DualE22 G431 868",
+    "deviceConf": [
+      "DEVICE_HAS_SX126x",
+      "FREQUENCY_BAND_868_MHZ",
+      "FREQUENCY_BAND_915_MHZ_FCC"
     ],
-    "appendix": "-usb"
+    "make": {
+      "extra_D_list": ["STDSTM32_USE_USB"],
+      "appendix": "-868-usb"
+    }
+  },
+  {
+    "name": "DIY DualE22 G431 433",
+    "deviceConf": ["DEVICE_HAS_SX126x", "FREQUENCY_BAND_433_MHZ"],
+    "make": {
+      "extra_D_list": ["STDSTM32_USE_USB"],
+      "appendix": "-433-usb"
+    }
   }
-}
+]

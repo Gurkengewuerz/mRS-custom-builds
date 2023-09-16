@@ -3,7 +3,6 @@
 import os
 import glob
 import json
-import re
 import ast
 
 mLRSProjectdirectory = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -20,35 +19,39 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
     with open(define, encoding="utf-8") as define_file:
         parsed_json = json.load(define_file)
         target = os.path.basename(os.path.dirname(define))
-        targetD = target.upper().replace("-", "_")
         halDefines = target.replace("tx-", "tx-hal-").replace("rx-", "rx-hal-") + ".h"
-        print("Parsing",parsed_json["name"])
 
-        newTLIST.append({"target": target, "target_D": targetD, "extra_D_list": parsed_json["make"]["extra_D_list"], "appendix": parsed_json["make"]["appendix"]})
-        print(newTLIST[len(newTLIST) - 1])
+        print("Parsing", target)
 
-        with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:
-            commonHALDeviceConf_content = commonHALDeviceConf_file.read()
+        for index, definition in enumerate(parsed_json):
+            targetD = target.upper().replace("-", "_") + "_DEF" + str(index)
+            print("Definition", definition["name"])
 
-            idx = commonHALDeviceConf_content.index("#endif")
-            halDef = ''.join(['  #define ' + x + '\r\n' for x in parsed_json['deviceConf']])
-            commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{parsed_json['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if 'tx-' in target else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
-            
-            print("Wrote", commonHALDeviceConf)
-            commonHALDeviceConf_file.seek(0)
-            commonHALDeviceConf_file.write(commonHALDeviceConf_content)
-            commonHALDeviceConf_file.truncate()
+            newTLIST.append({"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]})
+            print(newTLIST[len(newTLIST) - 1])
 
-        with open(commonHAL, "r+", encoding="utf-8") as commonHAL_file:
-            commonHAL_content = commonHAL_file.read()
+            with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:
+                commonHALDeviceConf_content = commonHALDeviceConf_file.read()
 
-            idx = commonHAL_content.index("#endif")
-            commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #include \"{halDefines}\"" + "\r\n" + commonHAL_content[idx:]
+                idx = commonHALDeviceConf_content.index("#endif")
+                halDef = ''.join(['  #define ' + x + '\r\n' for x in definition['deviceConf']])
+                commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if 'tx-' in target else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
+                
+                print("Wrote", commonHALDeviceConf)
+                commonHALDeviceConf_file.seek(0)
+                commonHALDeviceConf_file.write(commonHALDeviceConf_content)
+                commonHALDeviceConf_file.truncate()
 
-            print("Wrote", commonHAL)
-            commonHAL_file.seek(0)
-            commonHAL_file.write(commonHAL_content)
-            commonHAL_file.truncate()
+            with open(commonHAL, "r+", encoding="utf-8") as commonHAL_file:
+                commonHAL_content = commonHAL_file.read()
+
+                idx = commonHAL_content.index("#endif")
+                commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #include \"{halDefines}\"" + "\r\n" + commonHAL_content[idx:]
+
+                print("Wrote", commonHAL)
+                commonHAL_file.seek(0)
+                commonHAL_file.write(commonHAL_content)
+                commonHAL_file.truncate()
 
 
 print("Write new build targets")
