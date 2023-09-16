@@ -25,7 +25,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
         newTLIST.append({"target": parsed_json["target"], "target_D": parsed_json["target_D"], "extra_D_list": parsed_json["make"]["extra_D_list"], "appendix": parsed_json["make"]["appendix"]})
         print(newTLIST[len(newTLIST) - 1])
 
-        with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:
+        with open(commonHALDeviceConf, "w+", encoding="utf-8") as commonHALDeviceConf_file:
             commonHALDeviceConf_content = commonHALDeviceConf_file.read()
 
             idx = commonHALDeviceConf_content.index("#endif")
@@ -33,19 +33,24 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #define DEVICE_NAME \"{parsed_json['name']}\"\r\n  #define {'DEVICE_IS_RECEIVER' if 'tx-' in parsed_json['target'] else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
             
             print("Wrote", commonHALDeviceConf)
+            commonHALDeviceConf_file.seek(0)
             commonHALDeviceConf_file.write(commonHALDeviceConf_content)
+            commonHALDeviceConf_file.truncate()
 
-        with open(commonHAL, "r+", encoding="utf-8") as commonHAL_file:
+        with open(commonHAL, "w+", encoding="utf-8") as commonHAL_file:
             commonHAL_content = commonHAL_file.read()
 
             idx = commonHAL_content.index("#endif")
             commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #include {halDefines}" + "\r\n" + commonHAL_content[idx:]
 
             print("Wrote", commonHAL)
+            commonHAL_file.seek(0)
             commonHAL_file.write(commonHAL_content)
+            commonHAL_file.truncate()
+
 
 print("Write new build targets")
-with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_file:
+with open(makeFirmwareScript, "w+", encoding="utf-8") as makemakeFirmwareScript_file:
     makemakeFirmwareScript_content = makemakeFirmwareScript_file.read()
 
     # Parse the script content into an abstract syntax tree (AST)
@@ -61,4 +66,6 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
     
     modified_code = ast.unparse(tree)
     print("Wrote", makeFirmwareScript)
+    makemakeFirmwareScript_file.seek(0)
     makemakeFirmwareScript_file.write(modified_code)
+    makemakeFirmwareScript_file.truncate()
