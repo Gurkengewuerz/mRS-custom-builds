@@ -52,4 +52,4 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: releases
-        path: mLRS/tools/build3/**/*.hex
+        path: mLRS/tools/build3/firmware/
