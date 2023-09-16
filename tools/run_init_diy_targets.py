@@ -41,7 +41,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             commonHAL_content = commonHAL_file.read()
 
             idx = commonHAL_content.index("#endif")
-            commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #include {halDefines}" + "\r\n" + commonHAL_content[idx:]
+            commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #include \"{halDefines}\"" + "\r\n" + commonHAL_content[idx:]
 
             print("Wrote", commonHAL)
             commonHAL_file.seek(0)
