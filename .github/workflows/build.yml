@@ -22,9 +22,9 @@ jobs:
           && unzip -p /tmp/stm32cubeide-installer.sh.zip > /tmp/stm32cubeide-installer.sh \
           && rm /tmp/stm32cubeide-installer.sh.zip \
           && chmod +x /tmp/stm32cubeide-installer.sh \
-          && LICENSE_ALREADY_ACCEPTED=1 DEBIAN_FRONTEND=noninteractive sudo /tmp/stm32cubeide-installer.sh \
+          && /tmp/stm32cubeide-installer.sh --target /tmp/debfiles/ --noexec \
           && sudo apt-get -y update \
-          && DEBIAN_FRONTEND=noninteractive sudo apt-get -y -f install
+          && sudo LICENSE_ALREADY_ACCEPTED=1 DEBIAN_FRONTEND=noninteractive apt-get -y -f --no-install-recommends install /tmp/debfiles/***.deb
 
     - name: Copy local boards
       run: cp -rf customTargets/* mLRS/mLRS/
