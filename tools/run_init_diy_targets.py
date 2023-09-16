@@ -30,7 +30,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
 
             idx = commonHALDeviceConf_content.index("#endif")
             halDef = ''.join(['  #define ' + x + '\r\n' for x in parsed_json['deviceConf']])
-            commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #define DEVICE_NAME \"{parsed_json['name']}\"\r\n  #define {'DEVICE_IS_RECEIVER' if 'tx-' in parsed_json['target'] else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
+            commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #define DEVICE_NAME \"{parsed_json['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if 'tx-' in parsed_json['target'] else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
             
             print("Wrote", commonHALDeviceConf)
             commonHALDeviceConf_file.seek(0)
