@@ -15,6 +15,7 @@ commonHAL = os.path.join(commonHALDirectory, "hal.h")
 
 newTLIST = []
 
+print("Parsing defines.json")
 for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recursive=True):
     with open(define, encoding="utf-8") as define_file:
         parsed_json = json.load(define_file)
@@ -22,6 +23,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
         print("Parsing",parsed_json["name"])
 
         newTLIST.append({"target": parsed_json["target"], "target_D": parsed_json["target_D"], "extra_D_list": parsed_json["make"]["extra_D_list"], "appendix": parsed_json["make"]["appendix"]})
+        print(newTLIST[len(newTLIST) - 1])
 
         with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:
             commonHALDeviceConf_content = commonHALDeviceConf_file.read()
@@ -30,6 +32,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             halDef = ''.join(['  #define ' + x + '\r\n' for x in parsed_json['deviceConf']])
             commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #define DEVICE_NAME \"{parsed_json['name']}\"\r\n  #define {'DEVICE_IS_RECEIVER' if 'tx-' in parsed_json['target'] else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
             
+            print("Wrote", commonHALDeviceConf)
             commonHALDeviceConf_file.write(commonHALDeviceConf_content)
 
         with open(commonHAL, "r+", encoding="utf-8") as commonHAL_file:
@@ -38,9 +41,10 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             idx = commonHAL_content.index("#endif")
             commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {parsed_json['target_D']}\r\n  #include {halDefines}" + "\r\n" + commonHAL_content[idx:]
 
+            print("Wrote", commonHAL)
             commonHAL_file.write(commonHAL_content)
 
-
+print("Write new build targets")
 with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_file:
     makemakeFirmwareScript_content = makemakeFirmwareScript_file.read()
 
@@ -53,6 +57,8 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == 'TLIST':
                     node.value = ast.List(elts=[ast.Dict(keys=[], values=[]) for _ in newTLIST])
-
+                    print("New value", node.value)
+    
     modified_code = ast.unparse(tree)
+    print("Wrote", makeFirmwareScript)
     makemakeFirmwareScript_file.write(modified_code)
