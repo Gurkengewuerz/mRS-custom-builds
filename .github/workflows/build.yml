@@ -48,13 +48,6 @@ jobs:
     - name: List files
       continue-on-error: true
       run: ls -lah mLRS/
-
-    - name: "DEBUG: show Common/hal"
-      continue-on-error: true
-      run: cat mLRS/mLRS/Common/hal/hal.h
-    - name: "DEBUG: show Common/device_conf"
-      continue-on-error: true
-      run: cat mLRS/mLRS/Common/hal/device_conf.h
     
     - uses: actions/upload-artifact@v3
       with:
