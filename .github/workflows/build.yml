@@ -35,14 +35,14 @@ jobs:
 
     - name: Initialize missing defines for DIY boards
       working-directory: mLRS/tools/
-      run: python ./run_init_diy_targets.py --no-pause
+      run: python ./run_init_diy_targets.py
 
     - name: Setup mLRS repository
       working-directory: mLRS/
       run: python ./run_setup.py
     - name: Run build firmwares
       working-directory: mLRS/tools/
-      run: python ./run_make_firmwares3.py
+      run: python ./run_make_firmwares3.py --no-pause
 
     - name: List files
       continue-on-error: true
