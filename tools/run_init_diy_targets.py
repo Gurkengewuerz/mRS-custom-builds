@@ -57,7 +57,7 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == 'TLIST':
                     node.value = ast.List(elts=[ast.Dict(keys=[ast.Str(k) for k in item.keys()], values=[ast.Str(v) for v in item.values()]) for item in newTLIST])
-                    print("New value", node.value)
+                    print("New value", ast.dump(node.value))
     
     modified_code = ast.unparse(tree)
     print("Wrote", makeFirmwareScript)
