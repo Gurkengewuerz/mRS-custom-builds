@@ -18,13 +18,13 @@ jobs:
         python-version: "3.10"
     - name: Setup STM32CubeIDE
       run: |
-        wget -O /tmp/stm32cubeide-installer.sh.zip https://mc8051.de/en.st-stm32cubeide_1.13.1_17479_20230728_0839_amd64.deb_bundle.sh.zip \
+        wget -q -O /tmp/stm32cubeide-installer.sh.zip https://mc8051.de/en.st-stm32cubeide_1.13.1_17479_20230728_0839_amd64.deb_bundle.sh.zip \
           && unzip -p /tmp/stm32cubeide-installer.sh.zip > /tmp/stm32cubeide-installer.sh \
           && rm /tmp/stm32cubeide-installer.sh.zip \
           && chmod +x /tmp/stm32cubeide-installer.sh \
-          && LICENSE_ALREADY_ACCEPTED=1 DEBIAN_FRONTEND=noninteractive /tmp/stm32cubeide-installer.sh \
-          && apt-get -y update \
-          && DEBIAN_FRONTEND=noninteractive apt-get -y -f install
+          && LICENSE_ALREADY_ACCEPTED=1 DEBIAN_FRONTEND=noninteractive sudo /tmp/stm32cubeide-installer.sh \
+          && sudo apt-get -y update \
+          && DEBIAN_FRONTEND=noninteractive sudo apt-get -y -f install
 
     - name: Copy local boards
       run: cp -rf customTargets/* mLRS/mLRS/
