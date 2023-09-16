@@ -1,0 +1,96 @@
+From b9880ec3785f96ee0ef3be6a91b465d2b1d6e6e7 Mon Sep 17 00:00:00 2001
+From: Gurkengewuerz <niklas@schuetrumpf.net>
+Date: Sat, 16 Sep 2023 13:18:33 +0200
+Subject: [PATCH] feat: added usb support for G431CB
+
+---
+ mLRS/modules/stm32-usb-device/usbd_conf.c | 13 ++++++++++---
+ mLRS/modules/stm32-usb-device/usbd_conf.h |  7 +++++++
+ tools/run_copy_st_drivers.py              |  5 ++++-
+ 3 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/mLRS/modules/stm32-usb-device/usbd_conf.c b/mLRS/modules/stm32-usb-device/usbd_conf.c
+index 699fcfc..998d77b 100644
+--- a/mLRS/modules/stm32-usb-device/usbd_conf.c
++++ b/mLRS/modules/stm32-usb-device/usbd_conf.c
+@@ -23,6 +23,13 @@
+ #include "usbd_cdc.h"
+ #include "usbd_conf.h"
+ 
++#ifdef STM32F072xB
++#define USBD_USED_IRQ USB_IRQn
++#endif
++
++#ifdef STM32G431xx
++#define USBD_USED_IRQ USB_LP_IRQn
++#endif
+ 
+ PCD_HandleTypeDef hpcd_USB_FS;
+ void Error_Handler(void);
+@@ -46,8 +53,8 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
+     __HAL_RCC_USB_CLK_ENABLE();
+ 
+     /* Peripheral interrupt init */
+-    HAL_NVIC_SetPriority(USB_IRQn, 0, 0);
+-    HAL_NVIC_EnableIRQ(USB_IRQn);
++    HAL_NVIC_SetPriority(USBD_USED_IRQ, 0, 0);
++    HAL_NVIC_EnableIRQ(USBD_USED_IRQ);
+   }
+ }
+ 
+@@ -60,7 +67,7 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
+     __HAL_RCC_USB_CLK_DISABLE();
+ 
+     /* Peripheral interrupt Deinit*/
+-    HAL_NVIC_DisableIRQ(USB_IRQn);
++    HAL_NVIC_DisableIRQ(USBD_USED_IRQ);
+   }
+ }
+ 
+diff --git a/mLRS/modules/stm32-usb-device/usbd_conf.h b/mLRS/modules/stm32-usb-device/usbd_conf.h
+index 1836a53..ea9685c 100644
+--- a/mLRS/modules/stm32-usb-device/usbd_conf.h
++++ b/mLRS/modules/stm32-usb-device/usbd_conf.h
+@@ -26,9 +26,16 @@ extern "C" {
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++
++#ifdef STM32F072xB
+ #include "stm32f0xx.h"
+ #include "stm32f0xx_hal.h"
++#endif
+ 
++#ifdef STM32G431xx
++#include "stm32g4xx.h"
++#include "stm32g4xx_hal.h"
++#endif
+ 
+ #define USBD_MAX_NUM_INTERFACES                     1U
+ #define USBD_MAX_NUM_CONFIGURATION                  1U
+diff --git a/tools/run_copy_st_drivers.py b/tools/run_copy_st_drivers.py
+index b39968f..80a1364 100755
+--- a/tools/run_copy_st_drivers.py
++++ b/tools/run_copy_st_drivers.py
+@@ -112,6 +112,8 @@ g4xx_hal_files_to_include = [
+   'stm32g4xx_hal_dma.c',
+   'stm32g4xx_hal_i2c.c',
+   'stm32g4xx_hal_i2c_ex.c',
++  'stm32g4xx_hal_pcd.c',
++  'stm32g4xx_hal_pcd_ex.c',
+ ]
+ 
+ wlxx_hal_files_to_include = [
+@@ -313,7 +315,8 @@ if '-clean' in sys.argv: clean = True
+ #do_for_each_folder(clean=True)
+ do_for_each_target(clean=clean,silent=silent)
+ 
+-copy_usb_device_library_driver('tx-FRM303-f072cb', clean=clean,silent=silent)
++for target in ['tx-FRM303-f072cb', 'tx-diy-e22dual-g431cb']:
++    copy_usb_device_library_driver(target, clean=clean,silent=silent)
+ 
+ print('# DONE #')
+ if not silent:
+-- 
+2.42.0.windows.2
+

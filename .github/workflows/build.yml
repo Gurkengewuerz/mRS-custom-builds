@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+
+  build_custom_boards:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: "true"
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Setup STM32CubeIDE
+      run: |
+        wget -O /tmp/stm32cubeide-installer.sh.zip https://www.st.com/content/ccc/resource/technical/software/sw_development_suite/group0/c3/fc/45/60/0c/e9/4b/c6/stm32cubeide-deb/files/st-stm32cubeide_1.13.1_17479_20230728_0839_amd64.deb_bundle.sh.zip/jcr:content/translations/en.st-stm32cubeide_1.13.1_17479_20230728_0839_amd64.deb_bundle.sh.zip \
+          && unzip -p /tmp/stm32cubeide-installer.sh.zip > /tmp/stm32cubeide-installer.sh \
+          && rm /tmp/stm32cubeide-installer.sh.zip \
+          && chmod +x /tmp/stm32cubeide-installer.sh \
+          && LICENSE_ALREADY_ACCEPTED=1 DEBIAN_FRONTEND=noninteractive /tmp/stm32cubeide-installer.sh \
+          && apt-get -y update \
+          && DEBIAN_FRONTEND=noninteractive apt-get -y -f install
+
+    - name: Copy local boards
+      run: cp -rf customTargets/* mLRS/mLRS/
+    - name: Copy local tools
+      run: cp -rf tools/* mLRS/
+    - name: Apply local patches
+      run: find patches/ -type f -name "*.patch" | xargs -I {} git -C mLRS/ apply {}
+
+    - name: Initialize missing defines for DIY boards
+      working-directory: mLRS/tools/
+      run: python ./run_init_diy_targets.py --no-pause
+
+    - name: Setup mLRS repository
+      working-directory: mLRS/
+      run: python ./run_setup.py
+    - name: Run build firmwares
+      working-directory: mLRS/tools/
+      run: python ./run_make_firmwares3.py
+
+    - name: List files
+      run: ls -lah mLRS/
+
+    - name: "DEBUG: show Common/hal"
+      run: cat mLRS/mLRS/Common/hal/hal.h
+    - name: "DEBUG: show Common/device_conf"
+      run: cat mLRS/mLRS/Common/hal/device_conf.h
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: releases
+        path: ./mLRS/firmware/

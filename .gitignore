@@ -1,0 +1,42 @@
+**/.settings/*
+**/Release/*
+**/Debug/*
+*.launch
+
+customTargets/*/Drivers/CMSIS/Include/*
+customTargets/*/Drivers/CMSIS/Device/ST/*
+customTargets/*/Drivers/STM32??xx_HAL_Driver/*
+customTargets/*/Drivers/STM32_USB_Device_Library/*
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app

@@ -1,0 +1,14 @@
+{
+  "target": "tx-diy-e22dual-g431cb",
+  "target_D": "TX_DIY_E22DUAL_G431CB",
+  "name": "DIY DualE22 G431CB",
+  "deviceConf": [
+    "DEVICE_HAS_SX126x",
+    "FREQUENCY_BAND_868_MHZ",
+    "FREQUENCY_BAND_915_MHZ_FCC"
+  ],
+  "make": {
+    "extra_D_list": [],
+    "appendix": ""
+  }
+}

@@ -1,0 +1,41 @@
+From fe18bb51e643b2a05dc73de29f598ebaef6a25c9 Mon Sep 17 00:00:00 2001
+From: Gurkengewuerz <niklas@schuetrumpf.net>
+Date: Sat, 16 Sep 2023 14:01:35 +0200
+Subject: [PATCH] fix: fixed make firmware3 to support ci build
+
+---
+ tools/run_make_firmwares3.py | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/tools/run_make_firmwares3.py b/tools/run_make_firmwares3.py
+index 14c207b..3bc3a83 100755
+--- a/tools/run_make_firmwares3.py
++++ b/tools/run_make_firmwares3.py
+@@ -1073,6 +1073,7 @@ def mlrs_copy_all_hex_etc():
+ 
+ cmdline_target = ''
+ cmdline_D_list = []
++cmdline_nopause = False
+ 
+ cmd_pos = -1
+ for cmd in sys.argv:
+@@ -1083,6 +1084,9 @@ for cmd in sys.argv:
+     if cmd == '--define' or cmd == '-d' or cmd == '-D':
+         if sys.argv[cmd_pos+1] != '':
+             cmdline_D_list.append(sys.argv[cmd_pos+1])
++    if cmd == '--no-pause':
++        if sys.argv[cmd_pos+1] != '':
++            cmdline_nopause = True
+ 
+ #cmdline_target = 'tx-diy-e22dual-module02-g491re'
+ #cmdline_target = 'tx-diy-sxdualXXX'
+@@ -1105,4 +1109,5 @@ for target in targetlist:
+ if cmdline_target == '' or target_cnt > 0:
+     mlrs_copy_all_hex_etc()
+ 
+-os.system("pause")
++if not cmdline_nopause:
++    os.system("pause")
+-- 
+2.42.0.windows.2
+

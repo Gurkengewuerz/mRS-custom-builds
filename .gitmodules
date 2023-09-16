@@ -1,0 +1,4 @@
+[submodule "mLRS"]
+	path = mLRS
+	url = https://github.com/olliw42/mLRS.git
+	branch = main

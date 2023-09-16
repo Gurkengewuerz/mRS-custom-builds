@@ -1,0 +1,38 @@
+From e09703b588a135bb88e6de358f6e799fc1288579 Mon Sep 17 00:00:00 2001
+From: Gurkengewuerz <niklas@schuetrumpf.net>
+Date: Sat, 16 Sep 2023 13:59:25 +0200
+Subject: [PATCH] feat: added g431cb support for make firmwares3
+
+---
+ tools/run_make_firmwares3.py | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/tools/run_make_firmwares3.py b/tools/run_make_firmwares3.py
+index fcbe44a..14c207b 100755
+--- a/tools/run_make_firmwares3.py
++++ b/tools/run_make_firmwares3.py
+@@ -797,6 +797,12 @@ class cTargetF103RB(cTargetF1):
+             'STM32F103xB', 'startup_stm32f103rbhx.s', 'STM32F103RBHX_FLASH.ld',
+             extra_D_list, build_dir, elf_name)
+ 
++class cTargetG431CB(cTargetG4):
++    def __init__(self, target, target_D, extra_D_list, build_dir, elf_name):
++        super().__init__(
++            target, target_D,
++            'STM32G431xx', 'startup_stm32g431cbtx.s', 'STM32G431CBTX_FLASH.ld',
++            extra_D_list, build_dir, elf_name)
+ 
+ class cTargetG431KB(cTargetG4):
+     def __init__(self, target, target_D, extra_D_list, build_dir, elf_name):
+@@ -1025,6 +1031,8 @@ def mlrs_create_targetlist(appendix, extra_D_list):
+             tlist.append( cTargetF103RB(t['target'], t['target_D'], t['extra_D_list'], build_dir, elf_name) )
+         elif 'g431kb' in t['target']:
+             tlist.append( cTargetG431KB(t['target'], t['target_D'], t['extra_D_list'], build_dir, elf_name) )
++        elif 'g431cb' in t['target']:
++            tlist.append( cTargetG431CB(t['target'], t['target_D'], t['extra_D_list'], build_dir, elf_name) )
+         elif 'g441kb' in t['target']:
+             tlist.append( cTargetG441KB(t['target'], t['target_D'], t['extra_D_list'], build_dir, elf_name) )
+         elif 'g491re' in t['target']:
+-- 
+2.42.0.windows.2
+
