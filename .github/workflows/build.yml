@@ -29,9 +29,9 @@ jobs:
     - name: Copy local boards
       run: cp -rf customTargets/* mLRS/mLRS/
     - name: Copy local tools
-      run: cp -rf tools/* mLRS/
+      run: cp -rf tools/* mLRS/tools/
     - name: Apply local patches
-      run: find "$(readlink -f patches/)" -type f -name "*.patch" | xargs -I {} git -C mLRS/ apply {}
+      run: find "$(readlink -f patches/)" -type f -name "*.patch" | xargs -I {} sh -c 'echo "Applying {}"; git -C mLRS/ apply {}'
 
     - name: Initialize missing defines for DIY boards
       working-directory: mLRS/tools/
