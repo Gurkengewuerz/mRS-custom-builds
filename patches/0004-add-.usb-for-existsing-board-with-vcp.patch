@@ -1,0 +1,16 @@
+From 7703cb8273dd116845fd59cd930923163586bc37 Mon Sep 17 00:00:00 2001
+From: Gurkengewuerz <niklas@schuetrumpf.net>
+Date: Sat, 16 Sep 2023 21:44:17 +0200
+Subject: [PATCH] add .usb for existsing board with vcp
+
+---
+ mLRS/rx-FRM303-f072cb/.usb | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 mLRS/rx-FRM303-f072cb/.usb
+
+diff --git a/mLRS/rx-FRM303-f072cb/.usb b/mLRS/rx-FRM303-f072cb/.usb
+new file mode 100644
+index 0000000..e69de29
+-- 
+2.39.2.windows.1
+
