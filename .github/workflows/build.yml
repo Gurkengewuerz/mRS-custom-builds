@@ -31,7 +31,7 @@ jobs:
     - name: Copy local tools
       run: cp -rf tools/* mLRS/
     - name: Apply local patches
-      run: find patches/ -type f -name "*.patch" | xargs -I {} git -C mLRS/ apply {}
+      run: find "$(readlink -f patches/)" -type f -name "*.patch" | xargs -I {} git -C mLRS/ apply {}
 
     - name: Initialize missing defines for DIY boards
       working-directory: mLRS/tools/
