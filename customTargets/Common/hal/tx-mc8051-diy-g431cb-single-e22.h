@@ -184,7 +184,11 @@ void led_red_toggle(void) { gpio_toggle(LED_RED); }
 //-- POWER
 
 #define POWER_GAIN_DBM            27 // gain of a PA stage if present
+#ifdef FEATURE_1W
+#define POWER_SX126X_MAX_DBM      3 // maximum allowed sx power
+#else
 #define POWER_SX126X_MAX_DBM      0 // maximum allowed sx power
+#endif
 #define POWER_USE_DEFAULT_RFPOWER_CALC
 
 #define RFPOWER_DEFAULT           0 // index into rfpower_list array

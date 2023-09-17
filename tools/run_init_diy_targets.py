@@ -22,7 +22,6 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
     with open(define, encoding="utf-8") as define_file:
         parsed_json = json.load(define_file)
         target = os.path.basename(os.path.dirname(define))
-        halDefines = target.replace("tx-", "tx-hal-").replace("rx-", "rx-hal-") + ".h"
         
         useUSB = os.path.join(os.path.dirname(define), '.usb')
         if os.path.isfile(useUSB):
@@ -46,7 +45,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
 
                 idx = commonHALDeviceConf_content.index("#endif")
                 halDef = ''.join(['  #define ' + x + '\r\n' for x in definition['deviceConf']])
-                commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if 'tx-' in target else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
+                commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if 'tx-' in definition['hal'] else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
                 
                 print("Wrote", commonHALDeviceConf)
                 commonHALDeviceConf_file.seek(0)
@@ -57,7 +56,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
                 commonHAL_content = commonHAL_file.read()
 
                 idx = commonHAL_content.index("#endif")
-                commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #include \"{halDefines}\"" + "\r\n" + commonHAL_content[idx:]
+                commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #include \"{definition['hal']}.h\"" + "\r\n" + commonHAL_content[idx:]
 
                 print("Wrote", commonHAL)
                 commonHAL_file.seek(0)
