@@ -3,8 +3,8 @@
 import os
 import glob
 import json
-import ast
 import sys
+from redbaron import RedBaron
 
 mLRSProjectdirectory = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 mLRSdirectory = os.path.join(mLRSProjectdirectory, "mLRS")
@@ -66,18 +66,14 @@ print("Write new build targets")
 with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_file:
     makemakeFirmwareScript_content = makemakeFirmwareScript_file.read()
 
-    # Parse the script content into an abstract syntax tree (AST)
-    tree = ast.parse(makemakeFirmwareScript_content)
+    red = RedBaron(makemakeFirmwareScript_content)
 
-    # Find the assignment statement for TLIST
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name) and target.id == 'TLIST':
-                    node.value = ast.List(elts=[ast.Dict(keys=[ast.Str(k) for k in item.keys()], values=[ast.Str(v) for v in item.values()]) for item in newTLIST])
-                    print("New value for TLIST", ast.dump(node.value))
+    for assignment in red.find_all('assignment'):
+        if assignment.target.value == 'TLIST':
+            assignment.value = newTLIST
+            print("New value for TLIST", assignment.value.dumps())
 
-    modified_code = ast.unparse(tree)
+    modified_code = red.dumps()
     print("Wrote", makeFirmwareScript)
     makemakeFirmwareScript_file.seek(0)
     makemakeFirmwareScript_file.write(modified_code)
@@ -87,23 +83,20 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
 with open(copySTDriversScript, "r+", encoding="utf-8") as copySTDriversScript_file:
     copySTDriversScript_content = copySTDriversScript_file.read()
 
-    # Parse the script content into an abstract syntax tree (AST)
-    tree = ast.parse(copySTDriversScript_content)
+    red = RedBaron(copySTDriversScript_content)
 
-    # Find the assignment statement for TLIST
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name) and target.id == 'targets_with_usb_to_include':
-                    # Update the value of 'targets_with_usb_to_include' by merging with newUSBDriver
-                    if isinstance(node.value, ast.List):
-                        node.value.elts.extend([ast.Str(target) for target in newUSBDriver])
-                        print("New value for usb to include", ast.dump(node.value))
-                    else:
-                        print("targets_with_usb_to_include is not a list. Is this script up to date?")
-                        sys.exit(1)
-
-    modified_code = ast.unparse(tree)
+    for assignment in red.find_all('assignment'):
+        if assignment.target.value == 'targets_with_usb_to_include':
+            targets_list = assignment.value
+            if targets_list.type == 'list':
+                new_target_nodes = [RedBaron(f"'{target}'") for target in newUSBDriver]
+                targets_list.extend(new_target_nodes)
+                print("New value for targets_with_usb_to_include", targets_list.dumps())
+            else:
+                print("targets_with_usb_to_include is not a list. Is this script up to date?")
+                sys.exit(1)
+    
+    modified_code = red.dumps()
     print("Wrote", copySTDriversScript)
     copySTDriversScript_file.seek(0)
     copySTDriversScript_file.write(modified_code)
