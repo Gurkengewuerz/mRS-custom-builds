@@ -9,6 +9,7 @@ import sys
 mLRSProjectdirectory = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 mLRSdirectory = os.path.join(mLRSProjectdirectory, "mLRS")
 makeFirmwareScript = os.path.join(mLRSProjectdirectory, "tools", "run_make_firmwares3.py")
+copySTDriversScript = os.path.join(mLRSProjectdirectory, "tools", "run_copy_st_drivers.py")
 commonHALDirectory = os.path.join(mLRSdirectory, "Common", "hal")
 commonHALDeviceConf = os.path.join(commonHALDirectory, "device_conf.h")
 commonHAL = os.path.join(commonHALDirectory, "hal.h")
@@ -75,7 +76,25 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
                 if isinstance(target, ast.Name) and target.id == 'TLIST':
                     node.value = ast.List(elts=[ast.Dict(keys=[ast.Str(k) for k in item.keys()], values=[ast.Str(v) for v in item.values()]) for item in newTLIST])
                     print("New value for TLIST", ast.dump(node.value))
-                elif isinstance(target, ast.Name) and target.id == 'targets_with_usb_to_include':
+
+    modified_code = ast.unparse(tree)
+    print("Wrote", makeFirmwareScript)
+    makemakeFirmwareScript_file.seek(0)
+    makemakeFirmwareScript_file.write(modified_code)
+    makemakeFirmwareScript_file.truncate()
+
+
+with open(copySTDriversScript, "r+", encoding="utf-8") as copySTDriversScript_file:
+    copySTDriversScript_content = copySTDriversScript_file.read()
+
+    # Parse the script content into an abstract syntax tree (AST)
+    tree = ast.parse(copySTDriversScript_content)
+
+    # Find the assignment statement for TLIST
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == 'targets_with_usb_to_include':
                     # Update the value of 'targets_with_usb_to_include' by merging with newUSBDriver
                     if isinstance(node.value, ast.List):
                         node.value.elts.extend([ast.Str(target) for target in newUSBDriver])
@@ -85,7 +104,7 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
                         sys.exit(1)
 
     modified_code = ast.unparse(tree)
-    print("Wrote", makeFirmwareScript)
-    makemakeFirmwareScript_file.seek(0)
-    makemakeFirmwareScript_file.write(modified_code)
-    makemakeFirmwareScript_file.truncate()
+    print("Wrote", copySTDriversScript)
+    copySTDriversScript_file.seek(0)
+    copySTDriversScript_file.write(modified_code)
+    copySTDriversScript_file.truncate()
