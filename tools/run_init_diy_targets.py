@@ -31,12 +31,16 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
         print("Parsing", target_name)
 
         for index, definition in enumerate(parsed_json):
-            is_tx = 'tx-' in definition['hal']
+            is_tx = 'tx-' in definition['hal'].lower()
             target = (('tx' if is_tx else 'rx') + "-" + target_name + "-def" + str(index)).lower()
             targetD = target.upper().replace("-", "_")
-            if not os.symlink(os.path.dirname(define), os.path.join(os.path.dirname(os.path.dirname(define)), target), target_is_directory=True):
+            
+            try:
+                os.symlink(os.path.dirname(define), os.path.join(os.path.dirname(os.path.dirname(define)), target), target_is_directory=True):
+            except:
                 print("Failed to create symlink for target", target, "with definition", targetD)
                 sys.exit(1)
+            
             print("Definition", definition["name"], "sym target is",target)
 
             make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
