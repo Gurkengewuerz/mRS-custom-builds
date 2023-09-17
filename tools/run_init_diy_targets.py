@@ -4,6 +4,7 @@ import os
 import glob
 import json
 import ast
+import sys
 
 mLRSProjectdirectory = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 mLRSdirectory = os.path.join(mLRSProjectdirectory, "mLRS")
@@ -13,6 +14,7 @@ commonHALDeviceConf = os.path.join(commonHALDirectory, "device_conf.h")
 commonHAL = os.path.join(commonHALDirectory, "hal.h")
 
 newTLIST = []
+newUSBDriver = []
 
 print("Parsing defines.json")
 for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recursive=True):
@@ -20,6 +22,11 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
         parsed_json = json.load(define_file)
         target = os.path.basename(os.path.dirname(define))
         halDefines = target.replace("tx-", "tx-hal-").replace("rx-", "rx-hal-") + ".h"
+        
+        useUSB = os.path.join(os.path.dirname(define), '.usb')
+        if os.path.isfile(useUSB):
+            print("Target", target, "requires usb")
+            newUSBDriver.append(target)
 
         print("Parsing", target)
 
@@ -67,8 +74,16 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == 'TLIST':
                     node.value = ast.List(elts=[ast.Dict(keys=[ast.Str(k) for k in item.keys()], values=[ast.Str(v) for v in item.values()]) for item in newTLIST])
-                    print("New value", ast.dump(node.value))
-    
+                    print("New value for TLIST", ast.dump(node.value))
+                elif isinstance(target, ast.Name) and target.id == 'targets_with_usb_to_include':
+                    # Update the value of 'targets_with_usb_to_include' by merging with newUSBDriver
+                    if isinstance(node.value, ast.List):
+                        node.value.elts.extend([ast.Str(target) for target in newUSBDriver])
+                        print("New value for usb to include", ast.dump(node.value))
+                    else:
+                        print("targets_with_usb_to_include is not a list. Is this script up to date?")
+                        sys.exit(1)
+
     modified_code = ast.unparse(tree)
     print("Wrote", makeFirmwareScript)
     makemakeFirmwareScript_file.seek(0)
