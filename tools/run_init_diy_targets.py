@@ -36,7 +36,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             targetD = target.upper().replace("-", "_")
             
             try:
-                os.symlink(os.path.dirname(define), os.path.join(os.path.dirname(os.path.dirname(define)), target), target_is_directory=True):
+                os.symlink(os.path.dirname(define), os.path.join(os.path.dirname(os.path.dirname(define)), target), target_is_directory=True)
             except:
                 print("Failed to create symlink for target", target, "with definition", targetD)
                 sys.exit(1)
