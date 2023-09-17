@@ -282,22 +282,19 @@ void led_red_toggle(void) { gpio_toggle(LED_RED); }
 
 //-- POWER
 
-#define POWER_GAIN_DBM            27 // gain of a PA stage if present
-#ifdef FEATURE_1W
-#define POWER_SX126X_MAX_DBM      3 // maximum allowed sx power
-#else
-#define POWER_SX126X_MAX_DBM      0 // maximum allowed sx power
-#endif
+#define POWER_GAIN_DBM            26 // gain of a PA stage if present
+#define POWER_SX126X_MAX_DBM      4  // maximum allowed sx power
 #define POWER_USE_DEFAULT_RFPOWER_CALC
 
 #define RFPOWER_DEFAULT           0 // index into rfpower_list array
 
 const rfpower_t rfpower_list[] = {
-    { .dbm = POWER_MIN, .mW = INT8_MIN },
-    { .dbm = POWER_10_DBM, .mW = 10 },
+    { .dbm = POWER_MIN, .mW = INT8_MIN }, // SX1262 minimum power is -9 dBm, so minimum would be -9 + 26 = 15 dbm / ~32mW
+    { .dbm = POWER_17_DBM, .mW = 50 },
     { .dbm = POWER_20_DBM, .mW = 100 },
     { .dbm = POWER_24_DBM, .mW = 250 },
     { .dbm = POWER_27_DBM, .mW = 500 },
+    { .dbm = POWER_30_DBM, .mW = 1000 },
 };
 
 

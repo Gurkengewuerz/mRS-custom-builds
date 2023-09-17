@@ -19,26 +19,6 @@
       "package": "tx"
     }
   },
-  {
-    "name": "DIY SiglE22 G431 868",
-    "hal": [
-      "tx-mc8051-diy-g431cb",
-      "rx-mc8051-diy-g431cb"
-    ],
-    "deviceConf": [
-      "DEVICE_HAS_SX126x",
-      "FREQUENCY_BAND_868_MHZ",
-      "FREQUENCY_BAND_915_MHZ_FCC"
-    ],
-    "make": {
-      "extra_D_list": [
-        "STDSTM32_USE_USB",
-        "FEATURE_1W"
-      ],
-      "appendix": "-868-single-1W",
-      "package": "tx"
-    }
-  },
   # 868 MHz - Diversity
   {
     "name": "DIY DualE22 G431 868",
@@ -57,27 +37,6 @@
         "FEATURE_DUAL"
       ],
       "appendix": "-868-dual",
-      "package": "tx"
-    }
-  },
-  {
-    "name": "DIY DualE22 G431 868",
-    "hal": [
-      "tx-mc8051-diy-g431cb",
-      "rx-mc8051-diy-g431cb"
-    ],
-    "deviceConf": [
-      "DEVICE_HAS_SX126x",
-      "FREQUENCY_BAND_868_MHZ",
-      "FREQUENCY_BAND_915_MHZ_FCC"
-    ],
-    "make": {
-      "extra_D_list": [
-        "STDSTM32_USE_USB",
-        "FEATURE_1W",
-        "FEATURE_DUAL"
-      ],
-      "appendix": "-868-dual-1W",
       "package": "tx"
     }
   },
@@ -100,25 +59,7 @@
       "package": "tx"
     }
   },
-  {
-    "name": "DIY SiglE22 G431 433",
-    "hal": [
-      "tx-mc8051-diy-g431cb",
-      "rx-mc8051-diy-g431cb"
-    ],
-    "deviceConf": [
-      "DEVICE_HAS_SX126x",
-      "FREQUENCY_BAND_433_MHZ"
-    ],
-    "make": {
-      "extra_D_list": [
-        "STDSTM32_USE_USB",
-        "FEATURE_1W"
-      ],
-      "appendix": "-433-single-1W",
-      "package": "tx"
-    }
-  },
+
   # 433 MHz - Diversity
   {
     "name": "DIY DualE22 G431 433",
@@ -136,26 +77,6 @@
         "FEATURE_DUAL"
       ],
       "appendix": "-433-dual",
-      "package": "tx"
-    }
-  },
-  {
-    "name": "DIY DualE22 G431 433",
-    "hal": [
-      "tx-mc8051-diy-g431cb",
-      "rx-mc8051-diy-g431cb"
-    ],
-    "deviceConf": [
-      "DEVICE_HAS_SX126x",
-      "FREQUENCY_BAND_433_MHZ"
-    ],
-    "make": {
-      "extra_D_list": [
-        "STDSTM32_USE_USB",
-        "FEATURE_1W",
-        "FEATURE_DUAL"
-      ],
-      "appendix": "-433-dual-1W",
       "package": "tx"
     }
   }
