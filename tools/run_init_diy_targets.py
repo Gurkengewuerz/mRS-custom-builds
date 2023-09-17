@@ -4,6 +4,7 @@ import os
 import glob
 import json
 import sys
+import shutil
 from redbaron import RedBaron
 
 mLRSProjectdirectory = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -24,9 +25,6 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
         target_name = os.path.basename(os.path.dirname(define))
         
         useUSB = os.path.join(os.path.dirname(define), '.usb')
-        if os.path.isfile(useUSB):
-            print("Target", target_name, "requires usb")
-            newUSBDriver.append(target_name)
 
         print("Parsing", target_name)
 
@@ -35,13 +33,17 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             target = (('tx' if is_tx else 'rx') + "-" + target_name + "-def" + str(index)).lower()
             targetD = target.upper().replace("-", "_")
             
-            try:
-                os.symlink(os.path.dirname(define), os.path.join(os.path.dirname(os.path.dirname(define)), target), target_is_directory=True)
-            except:
+            target_path = os.path.join(mLRSdirectory, target)
+            if os.path.exists(target_path):
                 print("Failed to create symlink for target", target, "with definition", targetD)
                 sys.exit(1)
+            shutil.copytree(os.path.dirname(define), target_path)
             
-            print("Definition", definition["name"], "sym target is",target)
+            print("Definition", definition["name"], "sym target is", target, "with path", target_path)
+
+            if os.path.isfile(useUSB):
+                print("Target", target, "requires usb")
+                newUSBDriver.append(target)
 
             make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
             if "package" in definition["make"]:
