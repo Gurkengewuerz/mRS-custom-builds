@@ -35,7 +35,10 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
             targetD = target.upper().replace("-", "_") + "_DEF" + str(index)
             print("Definition", definition["name"])
 
-            newTLIST.append({"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]})
+            make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
+            if "package" in definition["make"]:
+                make["package"] = definition["make"]["package"]
+            newTLIST.append(make)
             print(newTLIST[len(newTLIST) - 1])
 
             with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:

@@ -8,7 +8,8 @@
     ],
     "make": {
       "extra_D_list": ["STDSTM32_USE_USB"],
-      "appendix": "-868-usb"
+      "appendix": "-868-usb",
+      "package": "tx"
     }
   },
   {
@@ -16,7 +17,8 @@
     "deviceConf": ["DEVICE_HAS_SX126x", "FREQUENCY_BAND_433_MHZ"],
     "make": {
       "extra_D_list": ["STDSTM32_USE_USB"],
-      "appendix": "-433-usb"
+      "appendix": "-433-usb",
+      "package": "tx"
     }
   }
 ]
