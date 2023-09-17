@@ -14,7 +14,7 @@
 // TX DIY DUAL-E22 v010 STM32G431CBT
 //-------------------------------------------------------
 
-#define DEVICE_HAS_DIVERSITY
+#define MLRS_FEATURE_NO_DIVERSITY
 #define DEVICE_HAS_JRPIN5
 #define DEVICE_HAS_COM_ON_USB
 
@@ -71,7 +71,6 @@
 //#define UARTC_USE_TX_ISR
 //#define UARTC_USE_RX
 //#define UARTC_RXBUFSIZE           512
-
 
 //-- SX12xx & SPI
 
@@ -145,78 +144,6 @@ void sx_dio_exti_isr_clearflag(void)
 }
 
 
-//-- SX12xx II & SPIB
-
-#define SPIB_USE_SPI1             // PA5, PA6, PA7
-#define SPIB_CS_IO                IO_PC14
-#define SPIB_USE_CLK_LOW_1EDGE    // datasheet says CPHA = 0  CPOL = 0
-#define SPIB_USE_CLOCKSPEED_9MHZ
-
-#define SX2_RESET                 IO_PA1
-#define SX2_DIO1                  IO_PA0
-#define SX2_BUSY                  IO_PC15
-#define SX2_RX_EN                 IO_PB6
-#define SX2_TX_EN                 IO_PB1
-
-#define SX2_DIO1_SYSCFG_EXTI_PORTx    LL_SYSCFG_EXTI_PORTA
-#define SX2_DIO1_SYSCFG_EXTI_LINEx    LL_SYSCFG_EXTI_LINE0
-#define SX2_DIO_EXTI_LINE_x           LL_EXTI_LINE_0
-#define SX2_DIO_EXTI_IRQn             EXTI0_IRQn
-#define SX2_DIO_EXTI_IRQHandler       EXTI0_IRQHandler
-//#define SX2_DIO_EXTI_IRQ_PRIORITY   11
-
-void sx2_init_gpio(void)
-{
-    gpio_init(SX2_RESET, IO_MODE_OUTPUT_PP_HIGH, IO_SPEED_VERYFAST);
-    gpio_init(SX2_DIO1, IO_MODE_INPUT_PD, IO_SPEED_VERYFAST);
-    gpio_init(SX2_BUSY, IO_MODE_INPUT_PU, IO_SPEED_VERYFAST);
-    gpio_init(SX2_TX_EN, IO_MODE_OUTPUT_PP_LOW, IO_SPEED_VERYFAST);
-    gpio_init(SX2_RX_EN, IO_MODE_OUTPUT_PP_LOW, IO_SPEED_VERYFAST);
-}
-
-bool sx2_busy_read(void)
-{
-    return (gpio_read_activehigh(SX2_BUSY)) ? true : false;
-}
-
-void sx2_amp_transmit(void)
-{
-    gpio_low(SX2_RX_EN);
-    gpio_high(SX2_TX_EN);
-}
-
-void sx2_amp_receive(void)
-{
-    gpio_low(SX2_TX_EN);
-    gpio_high(SX2_RX_EN);
-}
-
-void sx2_dio_init_exti_isroff(void)
-{
-    LL_SYSCFG_SetEXTISource(SX2_DIO1_SYSCFG_EXTI_PORTx, SX2_DIO1_SYSCFG_EXTI_LINEx);
-
-    // let's not use LL_EXTI_Init(), but let's do it by hand, is easier to allow enabling isr later
-    LL_EXTI_DisableEvent_0_31(SX2_DIO_EXTI_LINE_x);
-    LL_EXTI_DisableIT_0_31(SX2_DIO_EXTI_LINE_x);
-    LL_EXTI_DisableFallingTrig_0_31(SX2_DIO_EXTI_LINE_x);
-    LL_EXTI_EnableRisingTrig_0_31(SX2_DIO_EXTI_LINE_x);
-
-    NVIC_SetPriority(SX2_DIO_EXTI_IRQn, SX2_DIO_EXTI_IRQ_PRIORITY);
-    NVIC_EnableIRQ(SX2_DIO_EXTI_IRQn);
-}
-
-void sx2_dio_enable_exti_isr(void)
-{
-    LL_EXTI_ClearFlag_0_31(SX2_DIO_EXTI_LINE_x);
-    LL_EXTI_EnableIT_0_31(SX2_DIO_EXTI_LINE_x);
-}
-
-void sx2_dio_exti_isr_clearflag(void)
-{
-    LL_EXTI_ClearFlag_0_31(SX2_DIO_EXTI_LINE_x);
-}
-
-
 //-- Button
 
 #define BUTTON                    IO_PA4
@@ -257,10 +184,10 @@ void led_red_toggle(void) { gpio_toggle(LED_RED); }
 //-- POWER
 
 #define POWER_GAIN_DBM            27 // gain of a PA stage if present
-#define POWER_SX126X_MAX_DBM      3 // maximum allowed sx power
+#define POWER_SX126X_MAX_DBM      0 // maximum allowed sx power
 #define POWER_USE_DEFAULT_RFPOWER_CALC
 
-#define RFPOWER_DEFAULT           1 // index into rfpower_list array
+#define RFPOWER_DEFAULT           0 // index into rfpower_list array
 
 const rfpower_t rfpower_list[] = {
     { .dbm = POWER_MIN, .mW = INT8_MIN },
