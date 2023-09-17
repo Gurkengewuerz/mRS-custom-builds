@@ -21,18 +21,23 @@ print("Parsing defines.json")
 for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recursive=True):
     with open(define, encoding="utf-8") as define_file:
         parsed_json = json.load(define_file)
-        target = os.path.basename(os.path.dirname(define))
+        target_name = os.path.basename(os.path.dirname(define))
         
         useUSB = os.path.join(os.path.dirname(define), '.usb')
         if os.path.isfile(useUSB):
-            print("Target", target, "requires usb")
-            newUSBDriver.append(target)
+            print("Target", target_name, "requires usb")
+            newUSBDriver.append(target_name)
 
-        print("Parsing", target)
+        print("Parsing", target_name)
 
         for index, definition in enumerate(parsed_json):
-            targetD = target.upper().replace("-", "_") + "_DEF" + str(index)
-            print("Definition", definition["name"])
+            is_tx = 'tx-' in definition['hal']
+            target = (('tx' if is_tx else 'rx') + "-" + target_name + "-def" + str(index)).lower()
+            targetD = target.upper().replace("-", "_")
+            if not os.symlink(os.path.dirname(define), os.path.join(os.path.dirname(os.path.dirname(define)), target), target_is_directory=True):
+                print("Failed to create symlink for target", target, "with definition", targetD)
+                sys.exit(1)
+            print("Definition", definition["name"], "sym target is",target)
 
             make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
             if "package" in definition["make"]:
@@ -45,7 +50,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
 
                 idx = commonHALDeviceConf_content.index("#endif")
                 halDef = ''.join(['  #define ' + x + '\r\n' for x in definition['deviceConf']])
-                commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if 'tx-' in definition['hal'] else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
+                commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if is_tx else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
                 
                 print("Wrote", commonHALDeviceConf)
                 commonHALDeviceConf_file.seek(0)
