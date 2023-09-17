@@ -30,7 +30,7 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
 
         for index, definition in enumerate(parsed_json):
             is_tx = 'tx-' in definition['hal'].lower()
-            target = (('tx' if is_tx else 'rx') + "-" + target_name + "-def" + str(index)).lower()
+            target = (('tx' if is_tx else 'rx') + "-" + "def" + str(index) + "-" + target_name).lower()
             targetD = target.upper().replace("-", "_")
             
             target_path = os.path.join(mLRSdirectory, target)
