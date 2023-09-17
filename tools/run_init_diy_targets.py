@@ -2,7 +2,7 @@
 
 import os
 import glob
-import json
+import hjson
 import sys
 import shutil
 from redbaron import RedBaron
@@ -19,9 +19,9 @@ newTLIST = []
 newUSBDriver = []
 
 print("Parsing defines.json")
-for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recursive=True):
+for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.hjson"), recursive=True):
     with open(define, encoding="utf-8") as define_file:
-        parsed_json = json.load(define_file)
+        parsed_json = hjson.load(define_file)
         target_name = os.path.basename(os.path.dirname(define))
         
         useUSB = os.path.join(os.path.dirname(define), '.usb')
@@ -29,50 +29,51 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.json"), recur
         print("Parsing", target_name)
 
         for index, definition in enumerate(parsed_json):
-            is_tx = 'tx-' in definition['hal'].lower()
-            target = (('tx' if is_tx else 'rx') + "-" + "def" + str(index) + "-" + target_name).lower()
-            targetD = target.upper().replace("-", "_")
-            
-            target_path = os.path.join(mLRSdirectory, target)
-            if os.path.exists(target_path):
-                print("Failed to create symlink for target", target, "with definition", targetD)
-                sys.exit(1)
-            shutil.copytree(os.path.dirname(define), target_path)
-            
-            print("Definition", definition["name"], "sym target is", target, "with path", target_path)
-
-            if os.path.isfile(useUSB):
-                print("Target", target, "requires usb")
-                newUSBDriver.append(target)
-
-            make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
-            if "package" in definition["make"]:
-                make["package"] = definition["make"]["package"]
-            newTLIST.append(make)
-            print(newTLIST[len(newTLIST) - 1])
-
-            with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:
-                commonHALDeviceConf_content = commonHALDeviceConf_file.read()
-
-                idx = commonHALDeviceConf_content.index("#endif")
-                halDef = ''.join(['  #define ' + x + '\r\n' for x in definition['deviceConf']])
-                commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if is_tx else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
+            for hal in definition['hal']:
+                is_tx = 'tx-' in hal.lower()
+                target = (('tx' if is_tx else 'rx') + "-" + "def" + str(index) + "-" + target_name).lower()
+                targetD = target.upper().replace("-", "_")
                 
-                print("Wrote", commonHALDeviceConf)
-                commonHALDeviceConf_file.seek(0)
-                commonHALDeviceConf_file.write(commonHALDeviceConf_content)
-                commonHALDeviceConf_file.truncate()
+                target_path = os.path.join(mLRSdirectory, target)
+                if os.path.exists(target_path):
+                    print("Failed to create symlink for target", target, "with definition", targetD)
+                    sys.exit(1)
+                shutil.copytree(os.path.dirname(define), target_path)
+                
+                print("Definition", definition["name"], "sym target is", target, "with path", target_path)
 
-            with open(commonHAL, "r+", encoding="utf-8") as commonHAL_file:
-                commonHAL_content = commonHAL_file.read()
+                if os.path.isfile(useUSB):
+                    print("Target", target, "requires usb")
+                    newUSBDriver.append(target)
 
-                idx = commonHAL_content.index("#endif")
-                commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #include \"{definition['hal']}.h\"" + "\r\n" + commonHAL_content[idx:]
+                make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
+                if "package" in definition["make"]:
+                    make["package"] = definition["make"]["package"]
+                newTLIST.append(make)
+                print(newTLIST[len(newTLIST) - 1])
 
-                print("Wrote", commonHAL)
-                commonHAL_file.seek(0)
-                commonHAL_file.write(commonHAL_content)
-                commonHAL_file.truncate()
+                with open(commonHALDeviceConf, "r+", encoding="utf-8") as commonHALDeviceConf_file:
+                    commonHALDeviceConf_content = commonHALDeviceConf_file.read()
+
+                    idx = commonHALDeviceConf_content.index("#endif")
+                    halDef = ''.join(['  #define ' + x + '\r\n' for x in definition['deviceConf']])
+                    commonHALDeviceConf_content = commonHALDeviceConf_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #define DEVICE_NAME \"{definition['name']}\"\r\n  #define {'DEVICE_IS_TRANSMITTER' if is_tx else 'DEVICE_IS_RECEIVER'}\r\n{halDef}" + "\r\n" + commonHALDeviceConf_content[idx:]
+                    
+                    print("Wrote", commonHALDeviceConf)
+                    commonHALDeviceConf_file.seek(0)
+                    commonHALDeviceConf_file.write(commonHALDeviceConf_content)
+                    commonHALDeviceConf_file.truncate()
+
+                with open(commonHAL, "r+", encoding="utf-8") as commonHAL_file:
+                    commonHAL_content = commonHAL_file.read()
+
+                    idx = commonHAL_content.index("#endif")
+                    commonHAL_content = commonHAL_content[:idx] + "\r\n" + f"#endif\r\n#ifdef {targetD}\r\n  #include \"{hal}.h\"" + "\r\n" + commonHAL_content[idx:]
+
+                    print("Wrote", commonHAL)
+                    commonHAL_file.seek(0)
+                    commonHAL_file.write(commonHAL_content)
+                    commonHAL_file.truncate()
 
 
 print("Write new build targets")
@@ -114,3 +115,7 @@ with open(copySTDriversScript, "r+", encoding="utf-8") as copySTDriversScript_fi
     copySTDriversScript_file.seek(0)
     copySTDriversScript_file.write(modified_code)
     copySTDriversScript_file.truncate()
+
+print("*******************************************")
+print("Init complete with", len(newTLIST), "targets")
+print("*******************************************")
