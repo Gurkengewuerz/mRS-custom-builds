@@ -42,6 +42,9 @@
 
 #define MICROS_TIMx               TIM3
 
+#define CLOCK_TIMx                TIM2
+#define CLOCK_IRQn                TIM2_IRQn
+#define CLOCK_IRQHandler          TIM2_IRQHandler
 
 //-- UARTS
 // UARTB = serial port
