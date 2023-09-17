@@ -59,13 +59,15 @@
 #define UARTB_USE_RX
 #define UARTB_RXBUFSIZE           RX_SERIAL_RXBUFSIZE // 1024 // 512
 
-#define UART_USE_UART2 // JR pin5, MBridge
+#define UART_USE_UART2 // JR pin5, MBridge, output port
 #define UART_BAUD                 400000
 #define UART_USE_TX
 #define UART_TXBUFSIZE            512
 #define UART_USE_TX_ISR
 #define UART_USE_RX
 #define UART_RXBUFSIZE            512
+#define OUT_UARTx                 USART2 // UART_UARTx is not known yet, so define by hand
+
 
 // used VCP
 //#define UARTC_USE_UART1 // debug
@@ -220,6 +222,26 @@ void sx2_dio_exti_isr_clearflag(void)
     LL_EXTI_ClearFlag_0_31(SX2_DIO_EXTI_LINE_x);
 }
 #endif
+
+//-- Out port
+
+void out_init_gpio(void)
+{
+}
+
+void out_set_normal(void)
+{
+    LL_USART_Disable(OUT_UARTx);
+    LL_USART_SetTXPinLevel(OUT_UARTx, LL_USART_TXPIN_LEVEL_STANDARD);
+    LL_USART_Enable(OUT_UARTx);
+}
+
+void out_set_inverted(void)
+{
+    LL_USART_Disable(OUT_UARTx);
+    LL_USART_SetTXPinLevel(OUT_UARTx, LL_USART_TXPIN_LEVEL_INVERTED);
+    LL_USART_Enable(OUT_UARTx);
+}
 
 //-- Button
 
