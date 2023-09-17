@@ -67,10 +67,10 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
     makemakeFirmwareScript_content = makemakeFirmwareScript_file.read()
 
     red = RedBaron(makemakeFirmwareScript_content)
-
+    
     for assignment in red.find_all('assignment'):
         if assignment.target.value == 'TLIST':
-            assignment.value = newTLIST
+            assignment.value = "{}".format(newTLIST)
             print("New value for TLIST", assignment.value.dumps())
 
     modified_code = red.dumps()
