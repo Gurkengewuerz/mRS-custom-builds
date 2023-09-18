@@ -1,0 +1,40 @@
+From 7fefe4e8c3347bae84fb4cc1775cc130ea597fbf Mon Sep 17 00:00:00 2001
+From: Gurkengewuerz <niklas@schuetrumpf.net>
+Date: Mon, 18 Sep 2023 15:47:15 +0200
+Subject: [PATCH] fix: allow target based usb clock config
+
+---
+ mLRS/modules/stm32-usb-device/usbd_cdc_if.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/mLRS/modules/stm32-usb-device/usbd_cdc_if.c b/mLRS/modules/stm32-usb-device/usbd_cdc_if.c
+index abe9762..61c8d33 100644
+--- a/mLRS/modules/stm32-usb-device/usbd_cdc_if.c
++++ b/mLRS/modules/stm32-usb-device/usbd_cdc_if.c
+@@ -14,6 +14,7 @@ USBD_HandleTypeDef husbd_CDC;
+ 
+ extern USBD_DescriptorsTypeDef USBD_Desc; // declared in usbd_desc.c
+ extern PCD_HandleTypeDef hpcd_USB_FS; // declared in usbd_conf.c
++extern void USBClock_Config(void); // declared in main.cpp
+ 
+ USBD_CDC_ItfTypeDef USBD_CDC_fops; // forward declaration
+ USBD_CDC_LineCodingTypeDef USBD_CDC_LineCoding;
+@@ -55,14 +56,8 @@ static uint8_t usbd_initialized = 0; // to track if we use usb
+ 
+ void usb_init(void)
+ {
+-    // copied from SystemClock_Config()
+-    RCC_PeriphCLKInitTypeDef PeriphClkInit = {};
+-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+-    PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
++    USBClock_Config();
+ 
+-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
+-        //Error_Handler();
+-    }
+ 
+     // copied from MX_USB_DEVICE_Init()
+     if (USBD_Init(&husbd_CDC, &USBD_Desc, 0) != USBD_OK) {
+-- 
+2.42.0.windows.2
+
