@@ -16,7 +16,6 @@ commonHALDeviceConf = os.path.join(commonHALDirectory, "device_conf.h")
 commonHAL = os.path.join(commonHALDirectory, "hal.h")
 
 newTLIST = []
-newUSBDriver = []
 
 print("Parsing defines.json")
 for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.hjson"), recursive=True):
@@ -41,10 +40,6 @@ for define in glob.glob(os.path.join(mLRSdirectory, "**", "defines.hjson"), recu
                 shutil.copytree(os.path.dirname(define), target_path)
                 
                 print("Definition", definition["name"], "sym target is", target, "with path", target_path)
-
-                if os.path.isfile(useUSB):
-                    print("Target", target, "requires usb")
-                    newUSBDriver.append(target)
 
                 make = {"target": target, "target_D": targetD, "extra_D_list": definition["make"]["extra_D_list"], "appendix": definition["make"]["appendix"]}
                 if "package" in definition["make"]:
@@ -92,29 +87,6 @@ with open(makeFirmwareScript, "r+", encoding="utf-8") as makemakeFirmwareScript_
     makemakeFirmwareScript_file.seek(0)
     makemakeFirmwareScript_file.write(modified_code)
     makemakeFirmwareScript_file.truncate()
-
-
-with open(copySTDriversScript, "r+", encoding="utf-8") as copySTDriversScript_file:
-    copySTDriversScript_content = copySTDriversScript_file.read()
-
-    red = RedBaron(copySTDriversScript_content)
-
-    for assignment in red.find_all('assignment'):
-        if assignment.target.value == 'targets_with_usb_to_include':
-            targets_list = assignment.value
-            if targets_list.type == 'list':
-                new_target_nodes = [RedBaron(f"'{target}'") for target in newUSBDriver]
-                targets_list.extend(new_target_nodes)
-                print("New value for targets_with_usb_to_include", targets_list.dumps())
-            else:
-                print("targets_with_usb_to_include is not a list. Is this script up to date?")
-                sys.exit(1)
-    
-    modified_code = red.dumps()
-    print("Wrote", copySTDriversScript)
-    copySTDriversScript_file.seek(0)
-    copySTDriversScript_file.write(modified_code)
-    copySTDriversScript_file.truncate()
 
 print("*******************************************")
 print("Init complete with", len(newTLIST), "targets")
