@@ -19,11 +19,6 @@
 #else
 #define MLRS_FEATURE_NO_DIVERSITY
 #endif
-#ifdef MLRS_DEV_FEATURE_JRPIN5_SDIODE
-  #define DEVICE_HAS_JRPIN5
-  #undef DEVICE_HAS_IN
-  #undef DEVICE_HAS_IN_ON_JRPIN5_RX
-#endif
 #ifdef MLRS_FEATURE_DIVERSITY
   #define DEVICE_HAS_DIVERSITY
 #endif
@@ -52,8 +47,11 @@
 
 //-- UARTS
 // UARTB = serial port
-// UART = output port, SBus or whatever
-// UARTC = debug port
+// UARTC = COM (CLI)
+// UARTD = serial2 BT/ESP port
+// UART  = JR bay pin5
+// UARTE = in port, SBus or whatever
+// UARTF = debug port
 
 #define UARTB_USE_UART3 // serial
 #define UARTB_BAUD                RX_SERIAL_BAUDRATE
@@ -63,7 +61,7 @@
 #define UARTB_USE_RX
 #define UARTB_RXBUFSIZE           RX_SERIAL_RXBUFSIZE // 1024 // 512
 
-#define UART_USE_UART2 // JR pin5, MBridge, output port
+#define UART_USE_UART2 // JR pin5, MBridge
 #define UART_BAUD                 400000
 #define UART_USE_TX
 #define UART_TXBUFSIZE            512
@@ -72,12 +70,8 @@
 #define UART_RXBUFSIZE            512
 #define OUT_UARTx                 USART2 // UART_UARTx is not known yet, so define by hand
 
-#ifndef MLRS_DEV_FEATURE_JRPIN5_SDIODE
-#define JRPIN5_FULL_INTERNAL_ON_RX // does not require an external diode
-#else
-#define JRPIN5_RX_TX_INVERT_INTERNAL // requires external diode from Tx to Rx
-#endif
-
+//#define JRPIN5_RX_TX_INVERT_SWAP_INTERNAL // requires external diode from Rx to Tx
+#define JRPIN5_FULL_INTERNAL_ON_TX // does not require an external diode
 
 // used VCP
 //#define UARTC_USE_UART1 // debug
