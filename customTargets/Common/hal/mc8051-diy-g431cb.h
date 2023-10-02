@@ -19,7 +19,11 @@
 #else
 #define MLRS_FEATURE_NO_DIVERSITY
 #endif
-
+#ifdef MLRS_DEV_FEATURE_JRPIN5_SDIODE
+  #define DEVICE_HAS_JRPIN5
+  #undef DEVICE_HAS_IN
+  #undef DEVICE_HAS_IN_ON_JRPIN5_RX
+#endif
 #ifdef MLRS_FEATURE_DIVERSITY
   #define DEVICE_HAS_DIVERSITY
 #endif
@@ -67,6 +71,12 @@
 #define UART_USE_RX
 #define UART_RXBUFSIZE            512
 #define OUT_UARTx                 USART2 // UART_UARTx is not known yet, so define by hand
+
+#ifndef MLRS_DEV_FEATURE_JRPIN5_SDIODE
+#define JRPIN5_FULL_INTERNAL_ON_RX // does not require an external diode
+#else
+#define JRPIN5_RX_TX_INVERT_INTERNAL // requires external diode from Tx to Rx
+#endif
 
 
 // used VCP
@@ -242,6 +252,32 @@ void out_set_inverted(void)
     LL_USART_SetTXPinLevel(OUT_UARTx, LL_USART_TXPIN_LEVEL_INVERTED);
     LL_USART_Enable(OUT_UARTx);
 }
+
+//-- In port
+// this is nasty, UARTE defines not yet known, but cumbersome to add, so we include the lib
+#ifdef DEVICE_HAS_IN
+#include "../../modules/stm32ll-lib/src/stdstm32-uarte.h"
+
+void in_init_gpio(void)
+{
+}
+
+void in_set_normal(void)
+{
+    LL_USART_Disable(UARTE_UARTx);
+    LL_USART_SetRXPinLevel(UARTE_UARTx, LL_USART_RXPIN_LEVEL_STANDARD);
+    LL_USART_Enable(UARTE_UARTx);
+    gpio_init_af(UARTE_RX_IO, IO_MODE_INPUT_PU, UARTE_IO_AF, IO_SPEED_VERYFAST);
+}
+
+void in_set_inverted(void)
+{
+    LL_USART_Disable(UARTE_UARTx);
+    LL_USART_SetRXPinLevel(UARTE_UARTx, LL_USART_RXPIN_LEVEL_INVERTED);
+    LL_USART_Enable(UARTE_UARTx);
+    gpio_init_af(UARTE_RX_IO, IO_MODE_INPUT_PD, UARTE_IO_AF, IO_SPEED_VERYFAST);
+}
+#endif
 
 //-- Button
 

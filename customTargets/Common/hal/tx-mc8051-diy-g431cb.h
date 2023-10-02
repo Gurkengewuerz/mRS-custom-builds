@@ -1,4 +1,6 @@
+#define MLRS_DEV_FEATURE_JRPIN5_SDIODE
 #define DEVICE_HAS_JRPIN5
+#define DEVICE_HAS_IN_ON_JRPIN5_RX
 #define DEVICE_HAS_COM_ON_USB
 
 #include "mc8051-diy-g431cb.h"
