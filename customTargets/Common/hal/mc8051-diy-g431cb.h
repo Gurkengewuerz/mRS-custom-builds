@@ -51,7 +51,7 @@
 // UARTE = in port, SBus or whatever
 // UARTF = debug port
 
-#define UARTC_USE_UART3_PB10PB11 // serial
+#define UARTB_USE_UART3_PB10PB11 // serial
 #define UARTB_BAUD                RX_SERIAL_BAUDRATE
 #define UARTB_USE_TX
 #define UARTB_TXBUFSIZE           RX_SERIAL_TXBUFSIZE // 1024 // 512
