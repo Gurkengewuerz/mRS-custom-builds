@@ -26,9 +26,7 @@
   #undef DEVICE_HAS_DIVERSITY
 #endif
 
-#ifdef DEBUG_ENABLED
-#undef DEBUG_ENABLED
-#endif
+#define DEVICE_HAS_NO_DEBUG
 
 //-- Timers, Timing, EEPROM, and such stuff
 
@@ -53,7 +51,7 @@
 // UARTE = in port, SBus or whatever
 // UARTF = debug port
 
-#define UARTB_USE_UART3 // serial
+#define UARTC_USE_UART3_PB10PB11 // serial
 #define UARTB_BAUD                RX_SERIAL_BAUDRATE
 #define UARTB_USE_TX
 #define UARTB_TXBUFSIZE           RX_SERIAL_TXBUFSIZE // 1024 // 512
@@ -61,7 +59,7 @@
 #define UARTB_USE_RX
 #define UARTB_RXBUFSIZE           RX_SERIAL_RXBUFSIZE // 1024 // 512
 
-#define UART_USE_UART2 // JR pin5, MBridge
+#define UART_USE_UART2_PA2PA3 // JR pin5, MBridge
 #define UART_BAUD                 400000
 #define UART_USE_TX
 #define UART_TXBUFSIZE            512
