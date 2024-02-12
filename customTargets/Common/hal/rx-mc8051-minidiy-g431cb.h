@@ -7,12 +7,7 @@
 // hal
 //********************************************************
 
-#define MLRS_FEATURE_NO_DIVERSITY
-
-#ifdef MLRS_FEATURE_NO_DIVERSITY
-  #undef DEVICE_HAS_DIVERSITY
-#endif
-
+#undef DEVICE_HAS_DIVERSITY
 #define DEVICE_HAS_NO_DEBUG
 #define DEVICE_HAS_OUT
 
@@ -153,7 +148,7 @@ void out_set_inverted(void)
 
 //-- Button
 
-#define BUTTON                    IO_PB8
+#define BUTTON                    IO_PA8
 
 void button_init(void)
 {
