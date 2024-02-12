@@ -54,7 +54,7 @@
 #define UART_RXBUFSIZE            512
 #define OUT_UARTx                 USART2 // UART_UARTx is not known yet, so define by hand
 
-#define UARTB_USE_UART3_PB10PB11 // debug
+#define UARTC_USE_UART3_PB10PB11 // debug
 #define UARTC_BAUD                115200
 #define UARTC_USE_TX
 #define UARTC_TXBUFSIZE           512
