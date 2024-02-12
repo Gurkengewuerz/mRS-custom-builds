@@ -79,5 +79,25 @@
       "appendix": "-433-dual",
       "package": "tx"
     }
+  },
+
+  # 868 MHz - Mini
+  {
+    "name": "MiniDIY E22-868 G431",
+    "hal": [
+      "rx-mc8051-minidiy-g431cb"
+    ],
+    "deviceConf": [
+      "DEVICE_HAS_SX126x",
+      "FREQUENCY_BAND_868_MHZ",
+      "FREQUENCY_BAND_915_MHZ_FCC"
+    ],
+    "make": {
+      "extra_D_list": [
+        "STDSTM32_USE_USB"
+      ],
+      "appendix": "-mini-868",
+      "package": "tx"
+    }
   }
 ]
