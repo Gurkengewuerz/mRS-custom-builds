@@ -75,11 +75,11 @@
 #define SX_RX_EN                  IO_PB4
 #define SX_TX_EN                  IO_PC13
 
-#define SX_DIO1_SYSCFG_EXTI_PORTx     LL_SYSCFG_EXTI_PORTB
-#define SX_DIO1_SYSCFG_EXTI_LINEx     LL_SYSCFG_EXTI_LINE3
-#define SX_DIO_EXTI_LINE_x            LL_EXTI_LINE_3
-#define SX_DIO_EXTI_IRQn              EXTI3_IRQn
-#define SX_DIO_EXTI_IRQHandler        EXTI3_IRQHandler
+#define SX_DIO1_SYSCFG_EXTI_PORTx     LL_SYSCFG_EXTI_PORTA
+#define SX_DIO1_SYSCFG_EXTI_LINEx     LL_SYSCFG_EXTI_LINE5
+#define SX_DIO_EXTI_LINE_x            LL_EXTI_LINE_5
+#define SX_DIO_EXTI_IRQn              EXTI9_5_IRQn
+#define SX_DIO_EXTI_IRQHandler        EXTI9_5_IRQHandler
 //#define SX_DIO_EXTI_IRQ_PRIORITY    11
 
 #define SX_USE_CRYSTALOSCILLATOR
