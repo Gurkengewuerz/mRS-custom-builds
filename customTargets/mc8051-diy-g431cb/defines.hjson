@@ -93,7 +93,9 @@
       "FREQUENCY_BAND_915_MHZ_FCC"
     ],
     "make": {
-      "extra_D_list": [],
+      "extra_D_list": [
+        "STDSTM32_USE_USB"
+      ],
       "appendix": "-mini-868",
       "package": "tx"
     }
