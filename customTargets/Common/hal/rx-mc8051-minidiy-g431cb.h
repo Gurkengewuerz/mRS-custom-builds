@@ -37,7 +37,8 @@
 // UARTE = in port, SBus or whatever
 // UARTF = debug port
 
-#define UARTB_USE_UART1_PA9PA10 // serial
+//#define UARTB_USE_UART1_PA9PA10 // serial
+#define UARTB_USE_UART3_PB10PB11 // serial
 #define UARTB_BAUD                RX_SERIAL_BAUDRATE
 #define UARTB_USE_TX
 #define UARTB_TXBUFSIZE           RX_SERIAL_TXBUFSIZE // 1024 // 512
@@ -54,7 +55,8 @@
 #define UART_RXBUFSIZE            512
 #define OUT_UARTx                 USART2 // UART_UARTx is not known yet, so define by hand
 
-#define UARTC_USE_UART3_PB10PB11 // debug
+//#define UARTC_USE_UART3_PB10PB11 // debug
+#define UARTC_USE_UART1_PA9PA10 // debug
 #define UARTC_BAUD                115200
 #define UARTC_USE_TX
 #define UARTC_TXBUFSIZE           512
@@ -194,7 +196,7 @@ void led_red_toggle(void) { gpio_toggle(LED_RED); }
 //-- POWER
 
 #define POWER_GAIN_DBM            0 // gain of a PA stage if present
-#define POWER_SX126X_MAX_DBM      22 // maximum allowed sx power
+#define POWER_SX126X_MAX_DBM      SX126X_POWER_MAX // maximum allowed sx power
 #define POWER_USE_DEFAULT_RFPOWER_CALC
 
 #define RFPOWER_DEFAULT           2 // index into rfpower_list array
