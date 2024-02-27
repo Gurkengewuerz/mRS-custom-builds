@@ -9,8 +9,7 @@
 
 #undef DEVICE_HAS_DIVERSITY
 
-//#define DEVICE_HAS_NO_DEBUG
-#define DEVICE_HAS_SERIAL_OR_DEBUG
+#define DEVICE_HAS_NO_DEBUG
 
 #define DEVICE_HAS_OUT
 
@@ -37,7 +36,6 @@
 // UARTE = in port, SBus or whatever
 // UARTF = debug port
 
-//#define UARTB_USE_UART1_PA9PA10 // serial
 #define UARTB_USE_UART3_PB10PB11 // serial
 #define UARTB_BAUD                RX_SERIAL_BAUDRATE
 #define UARTB_USE_TX
@@ -54,13 +52,6 @@
 #define UART_USE_RX
 #define UART_RXBUFSIZE            512
 #define OUT_UARTx                 USART2 // UART_UARTx is not known yet, so define by hand
-
-//#define UARTC_USE_UART3_PB10PB11 // debug
-#define UARTC_USE_UART1_PA9PA10 // debug
-#define UARTC_BAUD                115200
-#define UARTC_USE_TX
-#define UARTC_TXBUFSIZE           512
-#define UARTC_USE_TX_ISR
 
 //-- SX12xx & SPI
 
