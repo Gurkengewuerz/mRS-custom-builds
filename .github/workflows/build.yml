@@ -45,7 +45,7 @@ jobs:
       run: python ./run_setup.py
     - name: Run build firmwares
       working-directory: mLRS/tools/
-      run: python ./run_make_firmwares3.py
+      run: python ./run_make_firmwares.py
 
     - name: List files
       continue-on-error: true
