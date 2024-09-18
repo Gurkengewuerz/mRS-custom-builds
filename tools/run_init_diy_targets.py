@@ -9,7 +9,7 @@ from redbaron import RedBaron
 
 mLRSProjectdirectory = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 mLRSdirectory = os.path.join(mLRSProjectdirectory, "mLRS")
-makeFirmwareScript = os.path.join(mLRSProjectdirectory, "tools", "run_make_firmwares3.py")
+makeFirmwareScript = os.path.join(mLRSProjectdirectory, "tools", "run_make_firmwares.py")
 copySTDriversScript = os.path.join(mLRSProjectdirectory, "tools", "run_copy_st_drivers.py")
 commonHALDirectory = os.path.join(mLRSdirectory, "Common", "hal")
 commonHALDeviceConf = os.path.join(commonHALDirectory, "device_conf.h")
